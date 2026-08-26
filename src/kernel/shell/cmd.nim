@@ -20,9 +20,9 @@
 ]#
 
 import ../../platform
-import ../../kern/games/snake
-import ../../kern/games/tictactoe
-import ../../kern/games/pong
+import ../games/snake
+import ../games/tictactoe
+import ../games/pong
 
 const MaxLine* = 64
 
