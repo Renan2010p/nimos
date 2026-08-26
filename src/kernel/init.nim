@@ -20,9 +20,8 @@
 ]#
 
 import platform
-import kern/shell/shell
+import kernel/shell/shell
 import kernel/version
-
 proc setup*(): void =
   clear()
   cursor_hide()

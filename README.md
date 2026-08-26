@@ -81,7 +81,10 @@ src/
 │
 ├── kernel/                 # Core kernel
 │   ├── init.nim            # Initialization sequence (subsystems, banner)
-│   └── version.nim         # Kernel version constants
+│   ├── version.nim         # Kernel version constants
+│   └── shell/              # Interactive shell
+│       ├── shell.nim       # Input loop and line editing
+│       └── cmd.nim         # Command implementations and dispatch
 │
 ├── hal/                    # Architecture-independent HAL interfaces
 │   ├── console.nim
@@ -103,9 +106,6 @@ src/
 │   └── conf/               # Linker script, freestanding stubs
 │
 └── kern/                   # Kernel services
-    ├── shell/              # Interactive shell
-    │   ├── shell.nim       # Input loop and line editing
-    │   └── cmd.nim         # Command implementations and dispatch
     └── games/              # Snake, Tic-Tac-Toe, Pong
 ```
 
