@@ -1,0 +1,6 @@
+build/
+nimcache/
+*.elf
+*.o
+*.c
+*.json

@@ -1,0 +1,5 @@
+#[
+    example
+    foo
+    foo
+]#
