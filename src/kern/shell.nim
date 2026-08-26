@@ -59,13 +59,20 @@ proc append_char(c: char): void =
     line_len += 1
     put_char(c)
 
-proc matches(start: int, length: int, s: cstring): bool =
-  var i: int = 0
-  while i < length:
-    if s[i] == '\0' or line_buf[start + i] != s[i]:
-      return false
-    i += 1
-  return true
+proc matches_cmd(start: int, length: int, a: char, b: char): bool =
+  return length == 2 and line_buf[start] == a and line_buf[start + 1] == b
+
+proc matches3(start: int, length: int, a: char, b: char, c: char): bool =
+  return length == 3 and line_buf[start] == a and line_buf[start + 1] == b and line_buf[start + 2] == c
+
+proc matches4(start: int, length: int, a: char, b: char, c: char, d: char): bool =
+  return length == 4 and line_buf[start] == a and line_buf[start + 1] == b and line_buf[start + 2] == c and line_buf[start + 3] == d
+
+proc matches5(start: int, length: int, a: char, b: char, c: char, d: char, e: char): bool =
+  return length == 5 and line_buf[start] == a and line_buf[start + 1] == b and line_buf[start + 2] == c and line_buf[start + 3] == d and line_buf[start + 4] == e
+
+proc matches6(start: int, length: int, a: char, b: char, c: char, d: char, e: char, f: char): bool =
+  return length == 6 and line_buf[start] == a and line_buf[start + 1] == b and line_buf[start + 2] == c and line_buf[start + 3] == d and line_buf[start + 4] == e and line_buf[start + 5] == f
 
 proc cmd_help(): void =
   set_attr(LightCyan, Black)
@@ -139,17 +146,17 @@ proc process_command(): void =
     a_start += 1
   let a_len: int = line_len - a_start
 
-  if matches(s, cmd_len, "help"):
+  if matches4(s, cmd_len, 'h', 'e', 'l', 'p'):
     cmd_help()
-  elif matches(s, cmd_len, "clear"):
+  elif matches5(s, cmd_len, 'c', 'l', 'e', 'a', 'r'):
     clear()
-  elif matches(s, cmd_len, "echo"):
+  elif matches4(s, cmd_len, 'e', 'c', 'h', 'o'):
     cmd_echo(a_start, a_len)
-  elif matches(s, cmd_len, "games"):
+  elif matches5(s, cmd_len, 'g', 'a', 'm', 'e', 's'):
     cmd_games()
-  elif matches(s, cmd_len, "halt"):
+  elif matches4(s, cmd_len, 'h', 'a', 'l', 't'):
     cmd_halt()
-  elif matches(s, cmd_len, "reboot"):
+  elif matches6(s, cmd_len, 'r', 'e', 'b', 'o', 'o', 't'):
     cmd_reboot()
   else:
     set_attr(Yellow, Black)
