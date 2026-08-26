@@ -81,7 +81,8 @@ src/
 │
 ├── kernel/                 # Core kernel
 │   ├── init.nim            # Initialization sequence (subsystems, banner)
-│   ├── version.nim         # Kernel version constants
+│   ├── config/             # Kernel configuration
+│   │   └── version.nim     # Kernel version constants
 │   ├── shell/              # Interactive shell
 │   │   ├── shell.nim       # Input loop and line editing
 │   │   └── cmd.nim         # Command implementations and dispatch

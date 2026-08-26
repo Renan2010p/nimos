@@ -21,7 +21,7 @@
 
 import platform
 import kernel/shell/shell
-import kernel/version
+import kernel/config/version
 proc setup*(): void =
   clear()
   cursor_hide()
