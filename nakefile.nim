@@ -38,10 +38,11 @@ const
   Entry    = "src/main.nim"
   LDScript = "src/arch/i386/conf/kernel.ld"
 
-  CC    = "clang"
-  CFLAGS = "-m32 -ffreestanding -fno-stack-protector -mno-red-zone " &
-           "-nostdlib -fno-pic -fno-pie -I/usr/lib/nim/lib/ -w"
-  LD    = "ld.lld"
+  CC    = "zig cc"
+  CFLAGS = "-target x86-freestanding-eabi -ffreestanding -fno-stack-protector " &
+           "-mno-red-zone -fno-pic -fno-pie -fno-sanitize=all -g0 " &
+           "-I/usr/lib/nim/lib/ -Isrc/arch/i386/conf -w"
+  LD    = "zig ld.lld"
   LDFLAGS = "-m elf_i386 -nostdlib -T " & LDScript
 
   GRUBCFG = "set timeout=0\n" &
@@ -66,7 +67,6 @@ task "build", "Compiles and links kernel.":
   var objs: seq[string] = @[]
   for f in walkFiles(NimCache / "*.c"):
     echo "  CC  " & f
-    shell "sed -i 's/__attribute__((visibility(\"hidden\"))) //g' \"" & f & "\""
     let obj = f.changeFileExt("o")
     direShell CC, CFLAGS, "-c", f, "-o", obj
     objs.add(obj)
