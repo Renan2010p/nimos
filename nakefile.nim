@@ -27,7 +27,7 @@
     $Nimos: nakefile.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
-import nake, os, std/algorithm
+import nake, os, std/algorithm, std/osproc, std/cpuinfo, std/streams
 
 const
   Build    = "build"
@@ -38,7 +38,7 @@ const
   Entry    = "src/main.nim"
   LDScript = "src/arch/i386/conf/kernel.ld"
 
-  CC    = "zig cc"
+  CCARG = "cc"
   CFLAGS = "-target x86-freestanding-eabi -ffreestanding -fno-stack-protector " &
            "-mno-red-zone -fno-pic -fno-pie -fno-sanitize=all -g0 " &
            "-I/usr/lib/nim/lib/ -Isrc/arch/i386/conf -w"
@@ -52,6 +52,8 @@ const
             "    boot\n" &
             "}\n"
 
+let zigExe = "/usr/bin/zig"
+
 task "clean", "Removes build files.":
   removeDir(Build)
   echo "Done."
@@ -63,13 +65,39 @@ task "build", "Compiles and links kernel.":
   echo "  nim c --nimcache:" & NimCache & " --compileOnly " & Entry
   direShell nimExe, "c", "--nimcache:" & NimCache, "--compileOnly", Entry
 
-  echo "  Compiling C..."
+  echo "  Compiling C (" & $cpuinfo.countProcessors() & " parallel jobs)..."
+  var jobs = cpuinfo.countProcessors()
   var objs: seq[string] = @[]
+  var files: seq[string] = @[]
   for f in walkFiles(NimCache / "*.c"):
-    echo "  CC  " & f
-    let obj = f.changeFileExt("o")
-    direShell CC, CFLAGS, "-c", f, "-o", obj
-    objs.add(obj)
+    files.add(f)
+  files.sort()
+
+  var procs: seq[(Process, string)] = @[]
+  var idx = 0
+  while idx < files.len or procs.len > 0:
+    while procs.len < jobs and idx < files.len:
+      let f = files[idx]
+      let obj = f.changeFileExt("o")
+      echo "  CC  " & f
+      let args = @[CCARG] & CFLAGS.splitWhitespace() & @["-c", f, "-o", obj]
+      procs.add((startProcess(zigExe, args = args), obj))
+      idx += 1
+    var i = 0
+    while i < procs.len:
+      let ec = procs[i][0].peekExitCode()
+      if ec != -1:
+        let output = procs[i][0].outputStream.readAll()
+        procs[i][0].close()
+        if ec != 0:
+          echo output
+          quit 1
+        objs.add(procs[i][1])
+        procs.del(i)
+      else:
+        i += 1
+    if procs.len >= jobs or idx >= files.len:
+      sleep(50)
   objs.sort()
 
   echo "  Linking " & Kernel
