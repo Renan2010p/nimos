@@ -24,7 +24,7 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    $NisKo: src/platform.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
+    $Nimos: src/platform.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
 {.warning[UnusedImport]: off.}
@@ -40,14 +40,18 @@ else:
 
   export cpu.halt
   export cpu.reboot
+  export cpu.nop
   export vga.clear
   export vga.set_attr
   export vga.put_char
   export vga.put_str
   export vga.backspace
   export vga.cursor_hide
+  export vga.set_cursor
   export vga.cursor_row
   export vga.cursor_col
+  export vga.poke
+  export vga.peek
   export keyboard.init
   export keyboard.has_key
   export keyboard.read_key

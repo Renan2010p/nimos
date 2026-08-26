@@ -24,10 +24,13 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    $NisKo: src/kern/shell.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
+    $Nimos: src/kern/shell.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
 import platform
+import games/snake
+import games/tictactoe
+import games/pong
 
 const
   MAX_LINE: int = 64
@@ -56,12 +59,10 @@ proc append_char(c: char): void =
     line_len += 1
     put_char(c)
 
-proc matches(start: int, length: int, s: string): bool =
-  if length != s.len:
-    return false
+proc matches(start: int, length: int, s: cstring): bool =
   var i: int = 0
   while i < length:
-    if line_buf[start + i] != s[i]:
+    if s[i] == '\0' or line_buf[start + i] != s[i]:
       return false
     i += 1
   return true
@@ -70,11 +71,12 @@ proc cmd_help(): void =
   set_attr(LightCyan, Black)
   put_str("Commands:")
   set_attr(LightGrey, Black)
-  put_str("\n  help   - show this")
-  put_str("\n  clear  - clear screen")
-  put_str("\n  echo   - echo text")
-  put_str("\n  halt   - halt CPU")
-  put_str("\n  reboot - reboot system")
+  put_str("\n  help    - show this")
+  put_str("\n  clear   - clear screen")
+  put_str("\n  echo    - echo text")
+  put_str("\n  games   - play games")
+  put_str("\n  halt    - halt CPU")
+  put_str("\n  reboot  - reboot system")
   put_str("\n")
 
 proc cmd_echo(args_start: int, args_len: int): void =
@@ -91,6 +93,34 @@ proc cmd_halt(): void =
 
 proc cmd_reboot(): void =
   reboot()
+
+proc cmd_games(): void =
+  clear()
+  set_attr(LightCyan, Black)
+  put_str("  Games\n\n")
+  set_attr(White, Black)
+  put_str("  1) Snake\n")
+  put_str("  2) Tic-Tac-Toe\n")
+  put_str("  3) Pong\n")
+  put_str("\n")
+  set_attr(LightGrey, Black)
+  put_str("  Select (1-3): ")
+
+  while not has_key():
+    discard
+  let c: char = read_key()
+  put_char(c)
+  put_str("\n")
+
+  case c
+  of '1': snake.run()
+  of '2': tictactoe.run()
+  of '3': pong.run()
+  else:
+    set_attr(Yellow, Black)
+    put_str("  Invalid option.\n")
+    put_str("  Press any key...")
+    discard read_key()
 
 proc process_command(): void =
   var s: int = 0
@@ -115,6 +145,8 @@ proc process_command(): void =
     clear()
   elif matches(s, cmd_len, "echo"):
     cmd_echo(a_start, a_len)
+  elif matches(s, cmd_len, "games"):
+    cmd_games()
   elif matches(s, cmd_len, "halt"):
     cmd_halt()
   elif matches(s, cmd_len, "reboot"):

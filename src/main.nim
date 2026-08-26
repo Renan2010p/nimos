@@ -1,5 +1,5 @@
 #[
-    NisKo Kernel — i386 Multiboot1 Entry Point
+    Nimos Kernel — i386 Multiboot1 Entry Point
 
     Copyright (c) 2026 Renan Lucas Vieira Hilario
     All rights reserved.
@@ -24,7 +24,7 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    $NisKo: src/main.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
+    $Nimos: src/main.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
 import platform
@@ -35,7 +35,7 @@ proc kernel_main(): void {.exportc, cdecl.} =
   cursor_hide()
 
   set_attr(LightCyan, Black)
-  put_str("NisKo v0.1")
+  put_str("Nimos v0.1")
   set_attr(LightGrey, Black)
   put_str(" — i386 multiboot\n")
   put_str("Type 'help' for commands.\n\n")

@@ -24,7 +24,7 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    $NisKo: src/arch/i386/cpu/cpu.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
+    $Nimos: src/arch/i386/cpu/cpu.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
 proc outb*(port: uint16, val: uint8): void {.inline.} =

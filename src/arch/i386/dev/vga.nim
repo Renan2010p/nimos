@@ -24,7 +24,7 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    $NisKo: src/arch/i386/dev/vga.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
+    $Nimos: src/arch/i386/dev/vga.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
 import ../cpu/cpu
@@ -121,3 +121,13 @@ proc backspace*(): void =
     let fg: VgaColor = VgaColor(vga_attr and 0x0F'u8)
     let bg: VgaColor = VgaColor((vga_attr shr 4) and 0x0F'u8)
     vga_buffer[cursor_row * VGA_WIDTH + cursor_col] = make_char(' ', fg, bg)
+
+proc set_cursor*(row: int, col: int): void =
+  cursor_row = row
+  cursor_col = col
+
+proc poke*(row: int, col: int, val: uint16): void =
+  vga_buffer[row * VGA_WIDTH + col] = val
+
+proc peek*(row: int, col: int): uint16 =
+  return vga_buffer[row * VGA_WIDTH + col]

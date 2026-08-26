@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * $NisKo: src/arch/i386/conf/kernel.ld,v 1.0 2026/08/26 00:00:00 renan Exp $
+ * $Nimos: src/arch/i386/conf/kernel.ld,v 1.0 2026/08/26 00:00:00 renan Exp $
  */
 
 ENTRY(_start)
