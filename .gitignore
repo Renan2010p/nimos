@@ -4,3 +4,5 @@ nimcache/
 *.o
 *.c
 *.json
+nakefile
+nakefile.exe

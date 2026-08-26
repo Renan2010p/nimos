@@ -27,7 +27,7 @@
     $Nimos: src/panicoverride.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
-import platform
+import hal/cpu
 
 proc rawoutput(s: string): void =
   discard

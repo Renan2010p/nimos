@@ -82,9 +82,27 @@ proc cmd_help(): void =
   put_str("\n  clear   - clear screen")
   put_str("\n  echo    - echo text")
   put_str("\n  games   - play games")
+  put_str("\n  uptime  - show time since boot")
+  put_str("\n  ticks   - show timer ticks")
   put_str("\n  halt    - halt CPU")
   put_str("\n  reboot  - reboot system")
   put_str("\n")
+
+proc cmd_uptime(): void =
+  let t: uint32 = ticks()
+  let secs: uint32 = t div 1000'u32
+  put_str("Up ")
+  put_uint(secs div 3600'u32)
+  put_str("h ")
+  put_uint((secs div 60'u32) mod 60'u32)
+  put_str("m ")
+  put_uint(secs mod 60'u32)
+  put_str("s\n")
+
+proc cmd_ticks(): void =
+  put_str("Ticks: ")
+  put_uint(ticks())
+  put_char('\n')
 
 proc cmd_echo(args_start: int, args_len: int): void =
   var i: int = 0
@@ -152,6 +170,10 @@ proc process_command(): void =
     clear()
   elif matches4(s, cmd_len, 'e', 'c', 'h', 'o'):
     cmd_echo(a_start, a_len)
+  elif matches6(s, cmd_len, 'u', 'p', 't', 'i', 'm', 'e'):
+    cmd_uptime()
+  elif matches5(s, cmd_len, 't', 'i', 'c', 'k', 's'):
+    cmd_ticks()
   elif matches5(s, cmd_len, 'g', 'a', 'm', 'e', 's'):
     cmd_games()
   elif matches4(s, cmd_len, 'h', 'a', 'l', 't'):

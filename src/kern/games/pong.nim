@@ -46,9 +46,6 @@ var
   score_r:  int
   running:  bool
 
-proc ch(ch: char, fg: VgaColor): uint16 =
-  return uint16(ch) or (uint16(ord(fg)) shl 8) or (uint16(ord(Black)) shl 12)
-
 proc delay(ticks: int): void =
   var i: int = 0
   while i < ticks:
@@ -60,7 +57,7 @@ proc clear_screen(): void =
   while y < HEIGHT:
     var x: int = 0
     while x < WIDTH:
-      poke(y, x, ch(' ', Black))
+      draw_char(y, x, ' ', Black, Black)
       x += 1
     y += 1
 
@@ -69,41 +66,41 @@ proc draw(): void =
 
   var i: int = 0
   while i < HEIGHT:
-    poke(i, WIDTH div 2, ch('|', DarkGrey))
+    draw_char(i, WIDTH div 2, '|', DarkGrey, Black)
     i += 1
 
-  poke(ball_y, ball_x, ch('o', White))
+  draw_char(ball_y, ball_x, 'o', White, Black)
 
   i = 0
   while i < PADDLE_H:
-    poke(left_y + i, 1, ch('#', LightGreen))
-    poke(right_y + i, WIDTH - 2, ch('#', LightRed))
+    draw_char(left_y + i, 1, '#', LightGreen, Black)
+    draw_char(right_y + i, WIDTH - 2, '#', LightRed, Black)
     i += 1
 
-  poke(0, 36, ch(chr(48 + score_l), Yellow))
-  poke(0, 37, ch(':', Yellow))
-  poke(0, 38, ch(chr(48 + score_r), Yellow))
+  draw_char(0, 36, chr(48 + score_l), Yellow, Black)
+  draw_char(0, 37, ':', Yellow, Black)
+  draw_char(0, 38, chr(48 + score_r), Yellow, Black)
 
-  poke(HEIGHT - 1, 25, ch('W', LightGrey))
-  poke(HEIGHT - 1, 26, ch('/', LightGrey))
-  poke(HEIGHT - 1, 27, ch('S', LightGrey))
-  poke(HEIGHT - 1, 28, ch(' ', LightGrey))
-  poke(HEIGHT - 1, 29, ch('l', LightGrey))
-  poke(HEIGHT - 1, 30, ch('e', LightGrey))
-  poke(HEIGHT - 1, 31, ch('f', LightGrey))
-  poke(HEIGHT - 1, 32, ch('t', LightGrey))
-  poke(HEIGHT - 1, 33, ch(' ', LightGrey))
-  poke(HEIGHT - 1, 34, ch('|', LightGrey))
-  poke(HEIGHT - 1, 35, ch(' ', LightGrey))
-  poke(HEIGHT - 1, 36, ch('I', LightGrey))
-  poke(HEIGHT - 1, 37, ch('/', LightGrey))
-  poke(HEIGHT - 1, 38, ch('K', LightGrey))
-  poke(HEIGHT - 1, 39, ch(' ', LightGrey))
-  poke(HEIGHT - 1, 40, ch('r', LightGrey))
-  poke(HEIGHT - 1, 41, ch('i', LightGrey))
-  poke(HEIGHT - 1, 42, ch('g', LightGrey))
-  poke(HEIGHT - 1, 43, ch('h', LightGrey))
-  poke(HEIGHT - 1, 44, ch('t', LightGrey))
+  draw_char(HEIGHT - 1, 25, 'W', LightGrey, Black)
+  draw_char(HEIGHT - 1, 26, '/', LightGrey, Black)
+  draw_char(HEIGHT - 1, 27, 'S', LightGrey, Black)
+  draw_char(HEIGHT - 1, 28, ' ', LightGrey, Black)
+  draw_char(HEIGHT - 1, 29, 'l', LightGrey, Black)
+  draw_char(HEIGHT - 1, 30, 'e', LightGrey, Black)
+  draw_char(HEIGHT - 1, 31, 'f', LightGrey, Black)
+  draw_char(HEIGHT - 1, 32, 't', LightGrey, Black)
+  draw_char(HEIGHT - 1, 33, ' ', LightGrey, Black)
+  draw_char(HEIGHT - 1, 34, '|', LightGrey, Black)
+  draw_char(HEIGHT - 1, 35, ' ', LightGrey, Black)
+  draw_char(HEIGHT - 1, 36, 'I', LightGrey, Black)
+  draw_char(HEIGHT - 1, 37, '/', LightGrey, Black)
+  draw_char(HEIGHT - 1, 38, 'K', LightGrey, Black)
+  draw_char(HEIGHT - 1, 39, ' ', LightGrey, Black)
+  draw_char(HEIGHT - 1, 40, 'r', LightGrey, Black)
+  draw_char(HEIGHT - 1, 41, 'i', LightGrey, Black)
+  draw_char(HEIGHT - 1, 42, 'g', LightGrey, Black)
+  draw_char(HEIGHT - 1, 43, 'h', LightGrey, Black)
+  draw_char(HEIGHT - 1, 44, 't', LightGrey, Black)
 
 proc input(): void =
   while has_key():

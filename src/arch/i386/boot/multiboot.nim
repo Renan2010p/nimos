@@ -1,5 +1,5 @@
 #[
-    multiboot — Boot Assembly
+    multiboot — Multiboot 1 Boot Entry
 
     Copyright (c) 2026 Renan Lucas Vieira Hilario
     All rights reserved.
@@ -27,40 +27,42 @@
     $Nimos: src/arch/i386/boot/multiboot.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
+import ../cpu/cpu
 import ../tables/gdt
 import ../tables/idt
 
-asm """
-.section .multiboot, "a"
-.align 4
-.long 0x1BADB002
-.long 0x00
-.long -(0x1BADB002 + 0x00)
+const
+  MB_MAGIC:   uint32 = 0x1BADB002'u32
+  MB_FLAGS:   uint32 = 0x00'u32
+  MB_CHECK:   uint32 = uint32(0) - (MB_MAGIC + MB_FLAGS)
+  STACK_SIZE: int    = 16384
 
-.section .bss
-.align 16
-stack_bottom:
-    .skip 16384
-stack_top:
+var mb_header {.codegenDecl: "__attribute__((section(\".multiboot\"), aligned(4))) $# $#".}: array[3, uint32] = [
+  MB_MAGIC, MB_FLAGS, MB_CHECK,
+]
 
-.section .text
-.globl _start
-.extern kernel_main
-_start:
-    movl $stack_top, %esp
-    pushl $0
-    popfl
-    call gdt_init
-    call idt_init
-    call kernel_main
-.hang:
-    cli
-    hlt
-    jmp .hang
-"""
+var stack_bottom {.exportc: "nimos_stack", align: 16.}: array[STACK_SIZE, uint8]
 
 proc gdt_init(): void {.exportc: "gdt_init", cdecl.} =
   gdt.init()
 
 proc idt_init(): void {.exportc: "idt_init", cdecl.} =
   idt.init()
+
+proc kernel_main(): void {.importc: "kernel_main", cdecl.}
+
+proc start_kernel(): void {.exportc: "nimos_start_kernel", cdecl, noreturn.} =
+  gdt_init()
+  idt_init()
+  kernel_main()
+  cli()
+  while true:
+    halt()
+
+proc kernel_entry(): void {.exportc: "_start", cdecl, asmNoStackFrame, noreturn.} =
+  asm """
+    movl $(nimos_stack + 16384), %esp
+    pushl $0
+    popfl
+    call nimos_start_kernel
+  """

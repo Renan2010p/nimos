@@ -49,28 +49,22 @@ var
   score:    int
   alive:    bool
 
-proc ch(ch: char, fg: VgaColor): uint16 =
-  return uint16(ch) or (uint16(ord(fg)) shl 8) or (uint16(ord(Black)) shl 12)
-
 proc delay(ticks: int): void =
   var i: int = 0
   while i < ticks:
     nop()
     i += 1
 
-proc put(r: int, c: int, val: uint16): void =
-  poke(r, c, val)
-
 proc draw_border(): void =
   var x: int = 0
   while x < FIELD_W + 2:
-    put(0, x, ch('-', LightGrey))
-    put(FIELD_H + 1, x, ch('-', LightGrey))
+    draw_char(0, x, '-', LightGrey, Black)
+    draw_char(FIELD_H + 1, x, '-', LightGrey, Black)
     x += 1
   var y: int = 0
   while y < FIELD_H + 2:
-    put(y, 0, ch('|', LightGrey))
-    put(y, FIELD_W + 1, ch('|', LightGrey))
+    draw_char(y, 0, '|', LightGrey, Black)
+    draw_char(y, FIELD_W + 1, '|', LightGrey, Black)
     y += 1
 
 proc draw_field(): void =
@@ -78,7 +72,7 @@ proc draw_field(): void =
   while y < FIELD_H:
     var x: int = 0
     while x < FIELD_W:
-      put(y + 1, x + 1, ch(' ', Black))
+      draw_char(y + 1, x + 1, ' ', Black, Black)
       x += 1
     y += 1
 
@@ -87,26 +81,26 @@ proc place_food(): void =
   food_y = 5
 
 proc draw_food(): void =
-  put(food_y + 1, food_x + 1, ch('*', Red))
+  draw_char(food_y + 1, food_x + 1, '*', Red, Black)
 
 proc draw_snake(): void =
   var i: int = 0
   while i < snake_len:
     let c: char = if i == 0: '@' else: 'o'
-    let col: VgaColor = if i == 0: LightGreen else: Green
-    put(snake_y[i] + 1, snake_x[i] + 1, ch(c, col))
+    let col: Color = if i == 0: LightGreen else: Green
+    draw_char(snake_y[i] + 1, snake_x[i] + 1, c, col, Black)
     i += 1
 
 proc draw_digit(row: int, col: int, d: int): void =
-  put(row, col, ch(chr(48 + d), White))
+  draw_char(row, col, chr(48 + d), White, Black)
 
 proc draw_score(): void =
-  put(0, 0, ch('S', Yellow))
-  put(0, 1, ch('c', Yellow))
-  put(0, 2, ch('o', Yellow))
-  put(0, 3, ch('r', Yellow))
-  put(0, 4, ch('e', Yellow))
-  put(0, 5, ch(':', Yellow))
+  draw_char(0, 0, 'S', Yellow, Black)
+  draw_char(0, 1, 'c', Yellow, Black)
+  draw_char(0, 2, 'o', Yellow, Black)
+  draw_char(0, 3, 'r', Yellow, Black)
+  draw_char(0, 4, 'e', Yellow, Black)
+  draw_char(0, 5, ':', Yellow, Black)
   let s: int = score
   draw_digit(0, 6, s div 100)
   draw_digit(0, 7, (s div 10) mod 10)

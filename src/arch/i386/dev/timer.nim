@@ -1,5 +1,5 @@
 #[
-    idt — Interrupt Descriptor Table
+    timer — 8254 Programmable Interval Timer
 
     Copyright (c) 2026 Renan Lucas Vieira Hilario
     All rights reserved.
@@ -24,56 +24,40 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    $Nimos: src/arch/i386/tables/idt.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
+    $Nimos: src/arch/i386/dev/timer.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
 import ../cpu/cpu
-import ./pic
-import ./isr
-import ./irq
+import ../tables/irq
+import ../tables/pic
 
-type
-  IdtEntry {.packed.} = object
-    base_low:  uint16
-    sel:       uint16
-    always0:   uint8
-    flags:     uint8
-    base_high: uint16
-
-  IdtPtr {.packed.} = object
-    limit: uint16
-    base:  uint32
+const
+  PIT_CHANNEL0: uint16 = 0x40'u16
+  PIT_CMD:      uint16 = 0x43'u16
+  PIT_FREQ:     uint32 = 1193182'u32
 
 var
-  idt_entries: array[256, IdtEntry]
-  idt_ptr: IdtPtr
+  tick_count: uint32 = 0
 
-proc set_gate*(num: uint8, base: uint32, sel: uint16, flags: uint8): void =
-  idt_entries[num].base_low  = uint16(base and 0xFFFF'u32)
-  idt_entries[num].base_high = uint16((base shr 16) and 0xFFFF'u32)
-  idt_entries[num].sel       = sel
-  idt_entries[num].always0   = 0'u8
-  idt_entries[num].flags     = flags
+proc tick(): void {.cdecl.} =
+  tick_count += 1'u32
 
-proc init*(): void =
-  idt_ptr.limit = uint16(sizeof(IdtEntry) * 256 - 1)
-  idt_ptr.base  = cast[uint32](addr idt_entries[0])
+proc init*(freq: uint32): void =
+  var divisor: uint32 = PIT_FREQ div freq
+  if divisor < 2'u32:
+    divisor = 2'u32
+  if divisor > 65535'u32:
+    divisor = 65535'u32
+  outb(PIT_CMD, 0x36'u8)
+  outb(PIT_CHANNEL0, uint8(divisor and 0xFF'u32))
+  outb(PIT_CHANNEL0, uint8((divisor shr 8) and 0xFF'u32))
+  irq.register(0, tick)
+  pic.unmask(0)
 
-  let base_addr: uint32 = cast[uint32](addr idt_entries[0])
-  var i: uint32 = 0'u32
-  while i < uint32(sizeof(IdtEntry) * 256):
-    cast[ptr uint8](base_addr + i)[] = 0'u8
-    i += 1'u32
+proc ticks*(): uint32 =
+  return tick_count
 
-  var j: int = 0
-  while j < 32:
-    idt.set_gate(uint8(j), isr.get_isr_addr(j), 0x08'u16, 0x8E'u8)
-    j += 1
-
-  j = 0
-  while j < 16:
-    idt.set_gate(uint8(32 + j), irq.get_irq_addr(j), 0x08'u16, 0x8E'u8)
-    j += 1
-
-  pic.remap()
-  lidt(cast[uint32](addr idt_ptr))
+proc sleep*(ms: uint32): void =
+  let start: uint32 = tick_count
+  while tick_count - start < ms:
+    halt()

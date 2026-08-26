@@ -27,6 +27,8 @@
     $Nimos: src/arch/i386/cpu/cpu.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
+import ./mem
+
 proc outb*(port: uint16, val: uint8): void {.inline.} =
   asm """
     outb %0, %1

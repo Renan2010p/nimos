@@ -28,25 +28,7 @@
 ]#
 
 import ../cpu/cpu
-
-type
-  VgaColor* = enum
-    Black        = 0
-    Blue         = 1
-    Green        = 2
-    Cyan         = 3
-    Red          = 4
-    Magenta      = 5
-    Brown        = 6
-    LightGrey    = 7
-    DarkGrey     = 8
-    LightBlue    = 9
-    LightGreen   = 10
-    LightCyan    = 11
-    LightRed     = 12
-    LightMagenta = 13
-    Yellow       = 14
-    White        = 15
+import ../../../hal/color
 
 const
   VGA_WIDTH:  int     = 80
@@ -66,10 +48,10 @@ var
 var vga_buffer {.volatile.}: ptr array[VGA_WIDTH * VGA_HEIGHT, uint16] =
   cast[ptr array[VGA_WIDTH * VGA_HEIGHT, uint16]](VGA_BUFFER)
 
-proc make_char(ch: char, fg: VgaColor, bg: VgaColor): uint16 =
+proc make_char*(ch: char, fg: Color, bg: Color): uint16 =
   return uint16(ch) or (uint16(ord(fg)) shl 8) or (uint16(ord(bg)) shl 12)
 
-proc set_attr*(fg: VgaColor, bg: VgaColor): void =
+proc set_attr*(fg: Color, bg: Color): void =
   vga_attr = uint8((ord(bg) shl 4) or ord(fg))
 
 proc clear*(): void =
@@ -104,8 +86,8 @@ proc put_char*(ch: char): void =
   else:
     if cursor_col >= VGA_WIDTH:
       newline()
-    let fg: VgaColor = VgaColor(vga_attr and 0x0F'u8)
-    let bg: VgaColor = VgaColor((vga_attr shr 4) and 0x0F'u8)
+    let fg: Color = Color(vga_attr and 0x0F'u8)
+    let bg: Color = Color((vga_attr shr 4) and 0x0F'u8)
     vga_buffer[cursor_row * VGA_WIDTH + cursor_col] = make_char(ch, fg, bg)
     cursor_col += 1
 
@@ -115,11 +97,46 @@ proc put_str*(s: string): void =
     put_char(s[i])
     i += 1
 
+const HEX_DIGITS: array[16, char] = [
+  '0', '1', '2', '3', '4', '5', '6', '7',
+  '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+]
+
+proc put_hex*(v: uint32): void =
+  put_str("0x")
+  var started: bool = false
+  var shift: int = 28
+  while shift >= 0:
+    let d: uint8 = uint8((v shr uint32(shift)) and 0xF'u32)
+    if d != 0'u8:
+      started = true
+    if started:
+      put_char(HEX_DIGITS[d])
+    shift -= 4
+  if not started:
+    put_char('0')
+
+proc put_uint*(v: uint32): void =
+  var buf: array[10, char]
+  var n: uint32 = v
+  var i: int = 0
+  if n == 0'u32:
+    put_char('0')
+    return
+  while n > 0'u32:
+    buf[i] = HEX_DIGITS[uint8(n mod 10'u32)]
+    n = n div 10'u32
+    i += 1
+  var j: int = i - 1
+  while j >= 0:
+    put_char(buf[j])
+    j -= 1
+
 proc backspace*(): void =
   if cursor_col > 0:
     cursor_col -= 1
-    let fg: VgaColor = VgaColor(vga_attr and 0x0F'u8)
-    let bg: VgaColor = VgaColor((vga_attr shr 4) and 0x0F'u8)
+    let fg: Color = Color(vga_attr and 0x0F'u8)
+    let bg: Color = Color((vga_attr shr 4) and 0x0F'u8)
     vga_buffer[cursor_row * VGA_WIDTH + cursor_col] = make_char(' ', fg, bg)
 
 proc set_cursor*(row: int, col: int): void =

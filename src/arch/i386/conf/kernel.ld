@@ -35,7 +35,7 @@ SECTIONS
     . = 1M;
 
     .multiboot : {
-        *(.multiboot)
+        KEEP(*(.multiboot))
     }
 
     .text : {
@@ -44,6 +44,8 @@ SECTIONS
 
     .rodata : {
         *(.rodata)
+        *(.rodata.*)
+        *(.data.rel.ro)
     }
 
     .data : {
@@ -52,6 +54,7 @@ SECTIONS
 
     .bss : {
         *(.bss)
+        *(COMMON)
     }
 
     /DISCARD/ : {

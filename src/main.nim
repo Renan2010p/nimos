@@ -34,6 +34,9 @@ proc kernel_main(): void {.exportc, cdecl.} =
   clear()
   cursor_hide()
 
+  init_timer(1000)
+  sti()
+
   set_attr(LightCyan, Black)
   put_str("Nimos v0.1")
   set_attr(LightGrey, Black)

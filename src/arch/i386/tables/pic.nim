@@ -29,6 +29,14 @@
 
 import ../cpu/cpu
 
+var
+  pic_mask: uint16 = 0xFFFF'u16
+
+proc set_mask(mask: uint16): void =
+  outb(0x21'u16, uint8(mask and 0xFF'u16))
+  io_wait()
+  outb(0xA1'u16, uint8((mask shr 8) and 0xFF'u16))
+
 proc remap*(): void =
   outb(0x20'u16, 0x11'u8)
   io_wait()
@@ -46,5 +54,10 @@ proc remap*(): void =
   io_wait()
   outb(0xA1'u16, 0x01'u8)
   io_wait()
-  outb(0x21'u16, 0xFF'u8)
-  outb(0xA1'u16, 0xFF'u8)
+  pic_mask = 0xFFFF'u16
+  set_mask(pic_mask)
+
+proc unmask*(irq: uint8): void =
+  if irq < 16'u8:
+    pic_mask = pic_mask and not (uint16(1) shl int(irq))
+    set_mask(pic_mask)
