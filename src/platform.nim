@@ -23,7 +23,9 @@ import hal/console
 import hal/keyboard
 import hal/timer
 import hal/cpu
+{.push warning[UnusedImport]: off.}
 import hal/boot
+{.pop.}
 
 export console
 export keyboard

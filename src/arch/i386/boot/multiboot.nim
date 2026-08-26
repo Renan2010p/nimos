@@ -31,7 +31,7 @@ const
   MB_CHECK:   uint32 = uint32(0) - (MB_MAGIC + MB_FLAGS)
   STACK_SIZE: int    = 16384
 
-var mb_header {.codegenDecl: "__attribute__((section(\".multiboot\"), aligned(4))) $# $#".}: array[3, uint32] = [
+var mb_header {.codegenDecl: "__attribute__((section(\".multiboot\"), aligned(4))) $# $#", used.}: array[3, uint32] = [
   MB_MAGIC, MB_FLAGS, MB_CHECK,
 ]
 

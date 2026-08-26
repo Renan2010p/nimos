@@ -20,7 +20,9 @@
 ]#
 
 import ./io
+{.push warning[UnusedImport]: off.}
 import ./mem
+{.pop.}
 
 proc halt*(): void {.inline.} =
   asm """
