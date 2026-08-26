@@ -32,6 +32,7 @@ import kern/shell
 
 proc kernel_main(): void {.exportc, cdecl.} =
   clear()
+  cursor_hide()
 
   set_attr(LightCyan, Black)
   put_str("NisKo v0.1")

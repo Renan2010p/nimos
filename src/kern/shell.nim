@@ -39,7 +39,7 @@ var
 
 proc prompt(): void =
   set_attr(LightGreen, Black)
-  put_str("nimk> ")
+  put_str("# ")
   set_attr(LightGrey, Black)
 
 proc reset_line(): void =

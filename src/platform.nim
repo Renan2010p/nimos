@@ -45,6 +45,7 @@ else:
   export vga.put_char
   export vga.put_str
   export vga.backspace
+  export vga.cursor_hide
   export vga.cursor_row
   export vga.cursor_col
   export keyboard.init

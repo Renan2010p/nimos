@@ -27,6 +27,8 @@
     $NisKo: src/arch/i386/dev/vga.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
+import ../cpu/cpu
+
 type
   VgaColor* = enum
     Black        = 0
@@ -50,6 +52,11 @@ const
   VGA_WIDTH:  int     = 80
   VGA_HEIGHT: int     = 25
   VGA_BUFFER: uint32  = 0xB8000'u32
+  VGA_ADDR:   uint16  = 0x3D4'u16
+
+proc cursor_hide*(): void =
+  outb(VGA_ADDR, 0x0A'u8)
+  outb(VGA_ADDR + 1'u16, 0x20'u8)
 
 var
   cursor_row*: int  = 0
