@@ -75,9 +75,13 @@ C compilation flags are configured for a **freestanding i386** target with no sa
 
 ```
 src/
-├── main.nim               # Entry point (Multiboot 1 header + kernel init)
-├── platform.nim            # Platform aggregator (HAL re-exports)
+├── main.nim               # Entry point → kernel/init.setup()
+├── panicoverride.nim       # Nim panic handler (required by --panics:off)
 ├── nim.cfg                 # Nim compiler configuration
+│
+├── kernel/                 # Core kernel
+│   ├── init.nim            # Initialization sequence (subsystems, banner)
+│   └── version.nim         # Kernel version constants
 │
 ├── hal/                    # Architecture-independent HAL interfaces
 │   ├── console.nim
@@ -88,15 +92,20 @@ src/
 │   └── boot.nim
 │
 ├── arch/i386/              # i386 architecture implementation
-│   ├── boot/multiboot.nim  # Multiboot 1 header
-│   ├── cpu/                # CPU detection, memory routines
-│   ├── dev/                # VGA text mode, PS/2 keyboard, PIT timer
-│   ├── hal/                # Concrete HAL (wraps dev/ modules)
-│   ├── tables/             # GDT, IDT, ISR, IRQ, PIC, PS/2 controller
+│   ├── boot/multiboot.nim  # Multiboot 1 header + entry point
+│   ├── cpu/                # Port I/O, CPU instructions, memory routines
+│   │   ├── io.nim
+│   │   ├── inst.nim
+│   │   └── mem.nim
+│   ├── dev/                # VGA text mode, PS/2 keyboard, PIT timer, PS/2 controller
+│   ├── hal/                # Concrete HAL (wraps dev/)
+│   ├── int/                # Interrupt handling: GDT, IDT, ISR, IRQ, PIC
 │   └── conf/               # Linker script, freestanding stubs
 │
-└── kern/
-    ├── shell.nim           # Interactive shell
+└── kern/                   # Kernel services
+    ├── shell/              # Interactive shell
+    │   ├── shell.nim       # Input loop and line editing
+    │   └── cmd.nim         # Command implementations and dispatch
     └── games/              # Snake, Tic-Tac-Toe, Pong
 ```
 

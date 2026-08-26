@@ -1,5 +1,5 @@
 #[
-    cpu
+    version — Kernel Version Information
 
     Copyright (C) 2026 Renan Lucas Vieira Hilario
 
@@ -19,10 +19,7 @@
     MA 02110-1301, USA.
 ]#
 
-import ../cpu/inst as cpu_arch
-
-export cpu_arch.halt
-export cpu_arch.reboot
-export cpu_arch.sti
-export cpu_arch.cli
-export cpu_arch.nop
+const KernelName* = "Nimos"
+const KernelVersion* = "0.1"
+const KernelArch* = "i386"
+const KernelBoot* = "multiboot"

@@ -21,9 +21,9 @@
     $Nimos: src/arch/i386/boot/multiboot.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
-import ../cpu/cpu
-import ../tables/gdt
-import ../tables/idt
+import ../cpu/inst
+import ../int/gdt
+import ../int/idt
 
 const
   MB_MAGIC:   uint32 = 0x1BADB002'u32

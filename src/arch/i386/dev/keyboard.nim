@@ -21,7 +21,7 @@
     $Nimos: src/arch/i386/dev/keyboard.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
-import ../cpu/cpu
+import ../cpu/io
 
 const
   PS2_STATUS: uint16 = 0x64'u16

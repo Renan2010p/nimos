@@ -18,10 +18,10 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
     MA 02110-1301, USA.
 
-    $Nimos: src/arch/i386/tables/idt.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
+    $Nimos: src/arch/i386/int/idt.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
-import ../cpu/cpu
+import ../cpu/inst
 import ./pic
 import ./isr
 import ./irq

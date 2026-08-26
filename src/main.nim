@@ -1,5 +1,5 @@
 #[
-    Nimos Kernel — i386 Multiboot1 Entry Point
+    Nimos Kernel — Entry Point
 
     Copyright (C) 2026 Renan Lucas Vieira Hilario
 
@@ -17,24 +17,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
     MA 02110-1301, USA.
-
-    $Nimos: src/main.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
-import platform
-import kern/shell
+import kernel/init
 
 proc kernel_main(): void {.exportc, cdecl.} =
-  clear()
-  cursor_hide()
-
-  init_timer(1000)
-  sti()
-
-  set_attr(LightCyan, Black)
-  put_str("Nimos v0.1")
-  set_attr(LightGrey, Black)
-  put_str(" — i386 multiboot\n")
-  put_str("Type 'help' for commands.\n\n")
-
-  shell.run()
+  init.setup()

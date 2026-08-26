@@ -18,10 +18,10 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
     MA 02110-1301, USA.
 
-    $Nimos: src/arch/i386/tables/pic.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
+    $Nimos: src/arch/i386/int/pic.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
-import ../cpu/cpu
+import ../cpu/io
 
 var
   pic_mask: uint16 = 0xFFFF'u16

@@ -1,6 +1,9 @@
 #[
     panicoverride — Panic Handler
 
+    Nim requires this exact module name when compiling with
+    `--panics:off` and `--os:standalone` (see nim.cfg).
+
     Copyright (C) 2026 Renan Lucas Vieira Hilario
 
     This program is free software; you can redistribute it and/or modify
@@ -17,14 +20,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
     MA 02110-1301, USA.
-
-    $Nimos: src/panicoverride.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
 import hal/cpu
 
-proc rawoutput(s: string): void =
+proc rawoutput(msg: string) {.nimcall.} =
   discard
 
-proc panic(s: string): void =
+proc panic(msg: string) {.nimcall.} =
   halt()

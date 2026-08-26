@@ -1,5 +1,5 @@
 #[
-    cpu
+    inst — CPU Instructions
 
     Copyright (C) 2026 Renan Lucas Vieira Hilario
 
@@ -19,10 +19,57 @@
     MA 02110-1301, USA.
 ]#
 
-import ../cpu/inst as cpu_arch
+import ./io
+import ./mem
 
-export cpu_arch.halt
-export cpu_arch.reboot
-export cpu_arch.sti
-export cpu_arch.cli
-export cpu_arch.nop
+proc halt*(): void {.inline.} =
+  asm """
+    cli
+    hlt
+  """
+
+proc cli*(): void {.inline.} =
+  asm """
+    cli
+  """
+
+proc sti*(): void {.inline.} =
+  asm """
+    sti
+  """
+
+proc nop*(): void {.inline.} =
+  asm """
+    nop
+  """
+
+proc reboot*(): void =
+  outb(0x64'u16, 0xFE'u8)
+
+asm """
+.code32
+.globl cpu_lgdt
+cpu_lgdt:
+    movl 4(%esp), %eax
+    lgdt (%eax)
+    ljmp $0x08, $1f
+1:
+    movw $0x10, %ax
+    movw %ax, %ds
+    movw %ax, %es
+    movw %ax, %fs
+    movw %ax, %gs
+    movw %ax, %ss
+    ret
+"""
+proc lgdt*(base: uint32): void {.importc: "cpu_lgdt", cdecl.}
+
+asm """
+.code32
+.globl cpu_lidt
+cpu_lidt:
+    movl 4(%esp), %eax
+    lidt (%eax)
+    ret
+"""
+proc lidt*(base: uint32): void {.importc: "cpu_lidt", cdecl.}

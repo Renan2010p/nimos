@@ -1,5 +1,5 @@
 #[
-    ps2 — PS/2 Controller
+    init — Kernel Initialization
 
     Copyright (C) 2026 Renan Lucas Vieira Hilario
 
@@ -17,28 +17,23 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
     MA 02110-1301, USA.
-
-    $Nimos: src/arch/i386/tables/ps2.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
-import ../cpu/cpu
+import platform
+import kern/shell/shell
+import kernel/version
 
-const
-  PS2_STATUS: uint16 = 0x64'u16
-  PS2_DATA:   uint16 = 0x60'u16
+proc setup*(): void =
+  clear()
+  cursor_hide()
 
-proc wait_read*(): void =
-  while (inb(PS2_STATUS) and 0x02'u8) != 0'u8:
-    discard inb(PS2_STATUS)
+  init_timer(1000)
+  sti()
 
-proc wait_write*(): void =
-  while (inb(PS2_STATUS) and 0x01'u8) != 0'u8:
-    discard inb(PS2_STATUS)
+  set_attr(LightCyan, Black)
+  put_str(KernelName & " v" & KernelVersion)
+  set_attr(LightGrey, Black)
+  put_str(" — " & KernelArch & " " & KernelBoot & "\n")
+  put_str("Type 'help' for commands.\n\n")
 
-proc write*(val: uint8): void =
-  wait_write()
-  outb(PS2_DATA, val)
-
-proc read*(): uint8 =
-  wait_read()
-  return inb(PS2_DATA)
+  shell.run()

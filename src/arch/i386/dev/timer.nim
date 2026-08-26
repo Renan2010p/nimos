@@ -21,9 +21,10 @@
     $Nimos: src/arch/i386/dev/timer.nim,v 1.0 2026/08/26 00:00:00 renan Exp $
 ]#
 
-import ../cpu/cpu
-import ../tables/irq
-import ../tables/pic
+import ../cpu/io
+import ../cpu/inst
+import ../int/irq
+import ../int/pic
 
 const
   PIT_CHANNEL0: uint16 = 0x40'u16

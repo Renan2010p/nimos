@@ -19,7 +19,7 @@
     MA 02110-1301, USA.
 ]#
 
-import ../cpu/cpu
+import ../cpu/inst
 import ../dev/vga
 import ../../../hal/color
 import std/macros
